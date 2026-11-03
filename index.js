@@ -32,7 +32,7 @@ const db = mongoClient.db("shobujshathi");
 const eventsCollection = db.collection("events");
 const joinsCollection = db.collection("event_joins");
 
-// One join per user per event
+
 try {
   await joinsCollection.createIndex(
     { eventId: 1, userEmail: 1 },
@@ -42,9 +42,7 @@ try {
   console.log("Join index note:", error.message);
 }
 
-// ---------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------
+
 
 function getLocalDateString() {
   const date = new Date();
@@ -59,7 +57,7 @@ function isValidEventId(id) {
   return ObjectId.isValid(id);
 }
 
-// Attach the real number of volunteers to every event
+
 async function attachJoinCounts(events) {
   if (!events.length) return [];
 
@@ -81,7 +79,6 @@ async function attachJoinCounts(events) {
   }));
 }
 
-// JWT validation middleware (protected APIs)
 function authenticate(req, res, next) {
   const header = req.headers.authorization || "";
 
@@ -103,7 +100,7 @@ function authenticate(req, res, next) {
   }
 }
 
-// Same as above, but guests are allowed (used by the public details page)
+
 function optionalAuthenticate(req, res, next) {
   const header = req.headers.authorization || "";
 
@@ -118,11 +115,9 @@ function optionalAuthenticate(req, res, next) {
   next();
 }
 
-// ---------------------------------------------------------------
-// Events
-// ---------------------------------------------------------------
 
-// All upcoming events (past events are excluded), ?limit=6 for the home page
+
+
 app.get('/events', async (req, res) => {
   try {
     const parsedLimit = parseInt(req.query.limit, 10);
@@ -155,7 +150,7 @@ app.get('/events', async (req, res) => {
   }
 });
 
-// Events created by the logged-in user (JWT protected)
+
 app.get('/events/mine', authenticate, async (req, res) => {
   try {
     const events = await eventsCollection
@@ -179,7 +174,7 @@ app.get('/events/mine', authenticate, async (req, res) => {
   }
 });
 
-// Events joined by the logged-in user, sorted by event date (JWT protected)
+
 app.get('/events/joined', authenticate, async (req, res) => {
   try {
     const joins = await joinsCollection
@@ -213,7 +208,7 @@ app.get('/events/joined', authenticate, async (req, res) => {
   }
 });
 
-// Single event details (public page, guests allowed)
+
 app.get('/events/:id', optionalAuthenticate, async (req, res) => {
   try {
     const { id } = req.params;
@@ -261,7 +256,6 @@ app.get('/events/:id', optionalAuthenticate, async (req, res) => {
   }
 });
 
-// Create Event (JWT protected, creator email comes from the token)
 app.post('/create-event', authenticate, async (req, res) => {
   try {
     const { title, description, category, image, location, date } = req.body;
@@ -307,7 +301,7 @@ app.post('/create-event', authenticate, async (req, res) => {
   }
 });
 
-// Update Event (JWT protected, only the creator can update)
+
 app.put('/events/:id', authenticate, async (req, res) => {
   try {
     const { id } = req.params;
@@ -380,7 +374,7 @@ app.put('/events/:id', authenticate, async (req, res) => {
   }
 });
 
-// Delete Event (JWT protected, only the creator can delete)
+
 app.delete('/events/:id', authenticate, async (req, res) => {
   try {
     const { id } = req.params;
@@ -425,7 +419,7 @@ app.delete('/events/:id', authenticate, async (req, res) => {
   }
 });
 
-// Join an Event (JWT protected) - stores event + user data together
+
 app.post('/events/:id/join', authenticate, async (req, res) => {
   try {
     const { id } = req.params;
@@ -489,7 +483,7 @@ app.post('/events/:id/join', authenticate, async (req, res) => {
   }
 });
 
-// Leave an Event (JWT protected)
+
 app.delete('/events/:id/join', authenticate, async (req, res) => {
   try {
     const { id } = req.params;
