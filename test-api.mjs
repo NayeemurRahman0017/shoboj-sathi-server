@@ -8,7 +8,7 @@ const SECRET = fs
   .slice("JWT_SECRET=".length)
   .trim();
 
-const API = "http://localhost:8000";
+const API = process.env.API_URL || "http://localhost:8000";
 const userA = jwt.sign({ email: "alice@test.com", name: "Alice" }, SECRET, { expiresIn: "1h" });
 const userB = jwt.sign({ email: "bob@test.com", name: "Bob" }, SECRET, { expiresIn: "1h" });
 

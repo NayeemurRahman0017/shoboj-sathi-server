@@ -7,7 +7,21 @@ import jwt from 'jsonwebtoken';
 
 const app = express();
 
-app.use(cors());
+
+
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://shoboj-sathi-client-6fap-kn9thwwn0-nayeem0017.vercel.app"
+  ],
+  credentials: true
+}));
+
+app.use(express.json());
+
+
+
+
 app.use(express.json());
 
 const port = process.env.PORT || 8000;
